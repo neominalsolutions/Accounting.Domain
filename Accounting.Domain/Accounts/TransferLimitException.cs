@@ -8,7 +8,7 @@ namespace Accounting.Domain.Accounts
 {
   public class TransferLimitException:Exception
   {
-    public TransferLimitException(int limit, string channel):base($"{channel} Transfer limit exceeded, maximum transfer limit is {limit}")
+    public TransferLimitException(int limit, string channel, string? message = ""):base($"{message} {channel} maximum transfer limit is {limit}")
     {
 
     }

@@ -1,4 +1,5 @@
-﻿using Accounting.Domain.SeedWork;
+﻿using Accounting.Domain.Accounts;
+using Accounting.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,17 @@ namespace Accounting.Domain.Customers
     public string Id { get; init; }
     public string Name { get; private set; }
     public string SurName { get; private set; }
-    public string PhoneNumber { get; private set; }
+    public string? PhoneNumber { get; private set; }
 
     public string FullName { get { return $"{Name} {SurName}"; } }
+
+    private List<Account> _accounts = new List<Account>();
+    public IReadOnlyList<Account> Accounts => _accounts;
+
+    public Customer()
+    {
+
+    }
 
     public Customer(string name,string surname)
     {

@@ -13,5 +13,7 @@ namespace Accounting.Domain.SeedWork
     void AddDomainEvent(INotification eventItem);
 
     void RemoveDomainEvent(INotification eventItem);
+
+    void ClearDomainEvents();
   }
 }

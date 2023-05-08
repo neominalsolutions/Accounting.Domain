@@ -14,10 +14,20 @@ namespace Accounting.Domain.Accounts
     public AccountTransactionType Type { get; init; }
     public DateTime CreatedAt { get; init; }
 
+    public Account Account { get; set; }
+    public string AccountId { get; set; }
 
-    public AccountTransaction(string id, Money money, AccountTransactionType type)
+
+
+    public AccountTransaction()
     {
-      Id = id;
+
+    }
+
+    public AccountTransaction(string accountId, Money money, AccountTransactionType type)
+    {
+      Id = Guid.NewGuid().ToString();
+      AccountId = accountId;
       Money = money;
       Type = type;
       CreatedAt = DateTime.Now;

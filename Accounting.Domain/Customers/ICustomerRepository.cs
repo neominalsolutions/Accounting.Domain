@@ -9,5 +9,6 @@ namespace Accounting.Domain.Customers
 {
   public interface ICustomerRepository:IRepository<Customer>
   {
+    Task<Customer> FindCustomerWithAccountsAsync(string Id);
   }
 }

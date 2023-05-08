@@ -1,4 +1,5 @@
-﻿using Accounting.Domain.SeedWork;
+﻿using Accounting.Domain.Customers;
+using Accounting.Domain.SeedWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,19 @@ namespace Accounting.Domain.Accounts
 {
   public class Account:AggregateRoot
   {
-    public Account(string id, string accountNumber, string iBAN, string customerId)
+    public Account()
     {
-      Id = id;
+
+    }
+
+    public Account(string accountNumber, string iBAN, string customerId)
+    {
+      Id = Guid.NewGuid().ToString();
       AccountNumber = accountNumber;
       IBAN = iBAN;
       CustomerId = customerId;
+      AdvanceAccountLimit = new Money(1000, "TL");
+      Balance = new Money(0, "TL");
     }
 
     public string Id { get; init; }
@@ -23,6 +31,8 @@ namespace Accounting.Domain.Accounts
     public string IBAN { get; private set; }
 
     public string CustomerId { get; private set; }
+
+    public Customer Customer { get; set; }
 
     public Money Balance { get; private set; }
 
@@ -37,14 +47,27 @@ namespace Accounting.Domain.Accounts
     public IReadOnlyCollection<AccountTransaction> Transactions => _transactions.AsReadOnly();
 
 
-    public void SetBalance(Money balance)
+
+    // double Dispatch
+    public void Deposit(Money money, TransferChannel transferChannel, IAccountDomainService accountDomainService)
     {
-      Balance = balance;
+      // DomainEvent
+
+      Balance += money;
+
+      accountDomainService.Deposit(this, money, transferChannel);
+
+      //var @event = new DepositSubmitted(Id, CustomerId, money, transferChannel);
+      //AddDomainEvent(@event);
+
+      _transactions.Add(new AccountTransaction(Id, money, AccountTransactionType.Deposit));
     }
 
     public void Deposit(Money money, TransferChannel transferChannel)
     {
       // DomainEvent
+
+      Balance+= money;
 
       var @event = new DepositSubmitted(Id, CustomerId, money, transferChannel);
       AddDomainEvent(@event);
@@ -55,6 +78,8 @@ namespace Accounting.Domain.Accounts
     public void WithDraw(Money money, TransferChannel transferChannel)
     {
       // DomainEvent
+
+      Balance -= money;
 
       var @event = new WithDrawSubmitted(Id, CustomerId, money, transferChannel);
       AddDomainEvent(@event);
@@ -68,6 +93,11 @@ namespace Accounting.Domain.Accounts
       IsBlocked = true;
     }
 
+
+    public void UpdateAdvanceLimit(Money money)
+    {
+      AdvanceAccountLimit = money;
+    }
 
    
 

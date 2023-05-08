@@ -13,7 +13,13 @@ namespace Accounting.Domain.Accounts
   /// </summary>
   public class AccountDomainService : IAccountDomainService
   {
-   
+
+    private readonly ICustomerRepository customerRepository;
+
+    public AccountDomainService(ICustomerRepository customerRepository)
+    {
+      this.customerRepository = customerRepository;
+    }
 
     /// <summary>
     /// Hesap blokeli ise para yatıralamaz
@@ -28,25 +34,36 @@ namespace Accounting.Domain.Accounts
     {
       var today = DateTime.Now;
 
-      if (acc.IsBlocked)
+      //await CustomerAccountIsValid(acc.AccountNumber,acc.CustomerId);
+
+      // atmden günlük para yatırma limiti 30.000
+      if(money > new Money(30000,"TL") && channel == TransferChannel.ATM)
       {
-        throw new AccountBlocked();
+        throw new TransferLimitException(3000, channel.Name.ToString(), "Daily");
       }
+
+      // online para günlük para yatırma limiti 100.00 
+
+      if (money > new Money(100000, "TL") && channel == TransferChannel.Online)
+      {
+        throw new TransferLimitException(100000, channel.Name.ToString(), "Daily");
+      }
+
+
+      // Hafta sonları online yada atm kanalı ile para yatırma limiti 5000
 
       if (today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday)
       {
         if (money > new Money(5000, "TL"))
         {
-          throw new TransferLimitException(5000, channel.Name.ToString());
+          throw new TransferLimitException(5000, channel.Name.ToString(),"Weekend");
         }
       }
 
-      acc.SetBalance(acc.Balance + money);
     }
 
-
     /// <summary>
-    ///  Para yatırma işleminde Hesap blokeli ise para çekilemez
+    ///  Hesap blokeli ise para çekilemez
     ///  ATM den 5000 TL üzeri para çekilemez
     ///  Online Bankacılık ile 100000 TL üzeri para çekilemez
     ///  Hesap Bakiyesi Avans hesap limitinn altına düşemez
@@ -59,7 +76,7 @@ namespace Accounting.Domain.Accounts
     /// <exception cref="TransferLimitException"></exception>
     public void Withdraw(Account acc, Money money, TransferChannel channel)
     {
-
+      //await CustomerAccountIsValid(acc.AccountNumber, acc.CustomerId);
 
       if (acc.IsBlocked)
       {
@@ -77,13 +94,13 @@ namespace Accounting.Domain.Accounts
 
       if(acc.Balance < money)
       {
-        if (money > acc.AdvanceAccountLimit)
+        if ((acc.Balance + acc.AdvanceAccountLimit).Amount < 0)
         {
           throw new AdvanceBalanceInsufficent();
         }
-      }
 
-      acc.SetBalance(acc.Balance - money);
+        acc.UpdateAdvanceLimit(acc.AdvanceAccountLimit + acc.Balance);
+      }
 
     }
   }

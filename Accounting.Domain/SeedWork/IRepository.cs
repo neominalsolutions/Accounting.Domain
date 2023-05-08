@@ -9,11 +9,11 @@ namespace Accounting.Domain.SeedWork
 {
   public interface IRepository<T> where T:AggregateRoot
   {
-    Task CreateAsyn(T item);
+    Task CreateAsync(T item);
     Task UpdateAsync(T item);
     Task DeleteAsync(string Id);
 
-    Task<IQueryable<T>> QueryAsync(Expression<Func<T, bool>> expression);
+   IQueryable Query(Expression<Func<T, bool>> expression);
     Task<List<T>> WhereAsync(Expression<Func<T,bool>> expression);
     Task<T> FindAsync(Expression<Func<T, bool>> expression);
   }

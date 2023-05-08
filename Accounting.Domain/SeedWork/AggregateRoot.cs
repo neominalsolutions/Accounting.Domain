@@ -19,6 +19,11 @@ namespace Accounting.Domain.SeedWork
       _domainEvents.Add(eventItem);
     }
 
+    public void ClearDomainEvents()
+    {
+      this.DomainEvents.Clear();
+    }
+
     public void RemoveDomainEvent(INotification eventItem)
     {
       _domainEvents?.Remove(eventItem);
