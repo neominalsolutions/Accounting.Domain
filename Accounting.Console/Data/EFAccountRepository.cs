@@ -12,8 +12,8 @@ namespace Accounting.Console.Data
 {
   public class EFAccountRepository : IAccountRepository
   {
-    private readonly AccountingContext accountingContext;
-    public EFAccountRepository(AccountingContext accountingContext)
+    private readonly AppDbContext accountingContext;
+    public EFAccountRepository(AppDbContext accountingContext)
     {
       this.accountingContext = accountingContext;
     }
@@ -44,6 +44,11 @@ namespace Accounting.Console.Data
     public IQueryable Query(Expression<Func<Account, bool>> expression)
     {
       return this.accountingContext.Accounts.Where(expression).AsNoTracking().AsQueryable();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+      await accountingContext.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Account item)

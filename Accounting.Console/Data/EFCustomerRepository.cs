@@ -11,9 +11,9 @@ namespace Accounting.Console.Data
 {
   public class EFCustomerRepository : ICustomerRepository
   {
-    private readonly AccountingContext accountingContext;
+    private readonly AppDbContext accountingContext;
 
-    public EFCustomerRepository(AccountingContext accountingContext)
+    public EFCustomerRepository(AppDbContext accountingContext)
     {
       this.accountingContext = accountingContext;
     }
@@ -53,6 +53,11 @@ namespace Accounting.Console.Data
     public Task<IQueryable<Customer>> QueryAsync(Expression<Func<Customer, bool>> expression)
     {
       throw new NotImplementedException();
+    }
+
+    public async Task SaveChangesAsync()
+    {
+      await accountingContext.SaveChangesAsync();
     }
 
     public Task UpdateAsync(Customer item)

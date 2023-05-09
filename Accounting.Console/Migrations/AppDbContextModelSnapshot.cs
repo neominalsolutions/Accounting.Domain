@@ -4,18 +4,16 @@ using Accounting.Console.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace Accounting.Console.Migrations
 {
-    [DbContext(typeof(AccountingContext))]
-    [Migration("20230508202442_Init")]
-    partial class Init
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +55,7 @@ namespace Accounting.Console.Migrations
                     b.HasIndex("IBAN")
                         .IsUnique();
 
-                    b.ToTable("Account", "AccountingContext");
+                    b.ToTable("Account", "AccountContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Accounts.AccountTransaction", b =>
@@ -76,7 +74,7 @@ namespace Accounting.Console.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountTransaction", "AccountingContext");
+                    b.ToTable("AccountTransaction", "AccountContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Customers.Customer", b =>
@@ -109,7 +107,52 @@ namespace Accounting.Console.Migrations
                     b.HasIndex("SurName")
                         .IsUnique();
 
-                    b.ToTable("Customer", "AccountingContext");
+                    b.ToTable("Customer", "AccountContext");
+                });
+
+            modelBuilder.Entity("Accounting.Domain.Order.Order", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Order", "OrderContext");
+                });
+
+            modelBuilder.Entity("Accounting.Domain.Order.OrderItem", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ListPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItem", "OrderContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Accounts.Account", b =>
@@ -136,7 +179,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountId");
 
-                            b1.ToTable("Account", "AccountingContext");
+                            b1.ToTable("Account", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountId");
@@ -158,7 +201,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountId");
 
-                            b1.ToTable("Account", "AccountingContext");
+                            b1.ToTable("Account", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountId");
@@ -197,7 +240,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountTransactionId");
 
-                            b1.ToTable("AccountTransaction", "AccountingContext");
+                            b1.ToTable("AccountTransaction", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountTransactionId");
@@ -219,7 +262,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountTransactionId");
 
-                            b1.ToTable("AccountTransaction", "AccountingContext");
+                            b1.ToTable("AccountTransaction", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountTransactionId");
@@ -234,6 +277,82 @@ namespace Accounting.Console.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Accounting.Domain.Order.Order", b =>
+                {
+                    b.HasOne("Accounting.Domain.Customers.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Accounting.Domain.Order.OrderStatus", "Status", b1 =>
+                        {
+                            b1.Property<string>("OrderId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("int")
+                                .HasColumnName("OrderCode");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("OrderStatus");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Order", "OrderContext");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.OwnsOne("Accounting.Domain.Order.ShipAddress", "ShipAddress", b1 =>
+                        {
+                            b1.Property<string>("OrderId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Ship_City");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Ship_Country");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Ship_Street");
+
+                            b1.HasKey("OrderId");
+
+                            b1.ToTable("Order", "OrderContext");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderId");
+                        });
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("ShipAddress")
+                        .IsRequired();
+
+                    b.Navigation("Status")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Accounting.Domain.Order.OrderItem", b =>
+                {
+                    b.HasOne("Accounting.Domain.Order.Order", null)
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Accounting.Domain.Accounts.Account", b =>
                 {
                     b.Navigation("Transactions");
@@ -242,6 +361,11 @@ namespace Accounting.Console.Migrations
             modelBuilder.Entity("Accounting.Domain.Customers.Customer", b =>
                 {
                     b.Navigation("Accounts");
+                });
+
+            modelBuilder.Entity("Accounting.Domain.Order.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

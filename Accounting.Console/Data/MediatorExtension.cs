@@ -12,7 +12,7 @@ namespace Accounting.Console.Data
   public static class MediatorExtension
   {
     // db context change tracker özelliği sayesinde entity state değerini added, modified,deleted,attached,detached olduğu yakalayıp IAggregateRoot interfacesinden türeyen tüm nesnelerin domainEventlerini linq ile buluyoruz. 
-    public static async Task DispatchDomainEventsAsync(this IMediator mediator, DbContext ctx)
+    public static async Task DispatchDomainEventsAsync(this IMediator mediator, AppDbContext ctx)
     {
       var domainEntities = ctx.ChangeTracker
                               .Entries<IAggregateRoot>()

@@ -4,16 +4,18 @@ using Accounting.Console.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace Accounting.Console.Migrations
 {
-    [DbContext(typeof(AccountingContext))]
-    partial class AccountingContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20230508225140_AccountContext")]
+    partial class AccountContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +57,7 @@ namespace Accounting.Console.Migrations
                     b.HasIndex("IBAN")
                         .IsUnique();
 
-                    b.ToTable("Account", "AccountingContext");
+                    b.ToTable("Account", "AccountContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Accounts.AccountTransaction", b =>
@@ -74,7 +76,7 @@ namespace Accounting.Console.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("AccountTransaction", "AccountingContext");
+                    b.ToTable("AccountTransaction", "AccountContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Customers.Customer", b =>
@@ -107,7 +109,7 @@ namespace Accounting.Console.Migrations
                     b.HasIndex("SurName")
                         .IsUnique();
 
-                    b.ToTable("Customer", "AccountingContext");
+                    b.ToTable("Customer", "AccountContext");
                 });
 
             modelBuilder.Entity("Accounting.Domain.Accounts.Account", b =>
@@ -134,7 +136,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountId");
 
-                            b1.ToTable("Account", "AccountingContext");
+                            b1.ToTable("Account", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountId");
@@ -156,7 +158,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountId");
 
-                            b1.ToTable("Account", "AccountingContext");
+                            b1.ToTable("Account", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountId");
@@ -195,7 +197,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountTransactionId");
 
-                            b1.ToTable("AccountTransaction", "AccountingContext");
+                            b1.ToTable("AccountTransaction", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountTransactionId");
@@ -217,7 +219,7 @@ namespace Accounting.Console.Migrations
 
                             b1.HasKey("AccountTransactionId");
 
-                            b1.ToTable("AccountTransaction", "AccountingContext");
+                            b1.ToTable("AccountTransaction", "AccountContext");
 
                             b1.WithOwner()
                                 .HasForeignKey("AccountTransactionId");

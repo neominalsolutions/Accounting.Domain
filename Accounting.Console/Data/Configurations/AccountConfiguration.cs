@@ -13,7 +13,7 @@ namespace Accounting.Console.Data.Configurations
   {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
-      builder.ToTable("Account", "AccountingContext");
+      builder.ToTable("Account", "AccountContext");
       builder.HasKey(x => x.Id);
       builder.HasIndex(x => x.IBAN).IsUnique();
       builder.HasIndex(x => x.AccountNumber).IsUnique();

@@ -17,7 +17,7 @@ namespace Accounting.Console.Data.Configurations
     {
 
       builder.HasKey(x => x.Id);
-      builder.ToTable("AccountTransaction", "AccountingContext");
+      builder.ToTable("AccountTransaction", "AccountContext");
       builder.HasOne(d => d.Account).WithMany(p => p.Transactions).HasForeignKey(x=> x.AccountId);
       builder.OwnsOne(x => x.Money).Property(x => x.Amount).HasColumnName("Money_Amount");
       builder.OwnsOne(x => x.Money).Property(x => x.Currency).HasColumnName("Money_Currency");

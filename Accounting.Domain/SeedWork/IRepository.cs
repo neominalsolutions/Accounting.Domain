@@ -13,6 +13,8 @@ namespace Accounting.Domain.SeedWork
     Task UpdateAsync(T item);
     Task DeleteAsync(string Id);
 
+    Task SaveChangesAsync();
+
    IQueryable Query(Expression<Func<T, bool>> expression);
     Task<List<T>> WhereAsync(Expression<Func<T,bool>> expression);
     Task<T> FindAsync(Expression<Func<T, bool>> expression);

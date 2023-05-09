@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Accounting.Console.Migrations
 {
-    public partial class Init : Migration
+    public partial class AccountContext : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "AccountingContext");
+                name: "AccountContext");
 
             migrationBuilder.CreateTable(
                 name: "Customer",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -29,7 +29,7 @@ namespace Accounting.Console.Migrations
 
             migrationBuilder.CreateTable(
                 name: "Account",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -49,7 +49,7 @@ namespace Accounting.Console.Migrations
                     table.ForeignKey(
                         name: "FK_Account_Customer_CustomerId",
                         column: x => x.CustomerId,
-                        principalSchema: "AccountingContext",
+                        principalSchema: "AccountContext",
                         principalTable: "Customer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -57,7 +57,7 @@ namespace Accounting.Console.Migrations
 
             migrationBuilder.CreateTable(
                 name: "AccountTransaction",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -74,7 +74,7 @@ namespace Accounting.Console.Migrations
                     table.ForeignKey(
                         name: "FK_AccountTransaction_Account_AccountId",
                         column: x => x.AccountId,
-                        principalSchema: "AccountingContext",
+                        principalSchema: "AccountContext",
                         principalTable: "Account",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -82,40 +82,40 @@ namespace Accounting.Console.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Account_AccountNumber",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Account",
                 column: "AccountNumber",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Account_CustomerId",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Account",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Account_IBAN",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Account",
                 column: "IBAN",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountTransaction_AccountId",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "AccountTransaction",
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customer_Name",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Customer",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customer_PhoneNumber",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Customer",
                 column: "PhoneNumber",
                 unique: true,
@@ -123,7 +123,7 @@ namespace Accounting.Console.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customer_SurName",
-                schema: "AccountingContext",
+                schema: "AccountContext",
                 table: "Customer",
                 column: "SurName",
                 unique: true);
@@ -133,15 +133,15 @@ namespace Accounting.Console.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AccountTransaction",
-                schema: "AccountingContext");
+                schema: "AccountContext");
 
             migrationBuilder.DropTable(
                 name: "Account",
-                schema: "AccountingContext");
+                schema: "AccountContext");
 
             migrationBuilder.DropTable(
                 name: "Customer",
-                schema: "AccountingContext");
+                schema: "AccountContext");
         }
     }
 }
